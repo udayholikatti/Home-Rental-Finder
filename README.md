@@ -196,19 +196,6 @@ limiting, and the full forgot/reset-password flow. All pass on a clean run.
 not be live-tested without real credentials — the honest-failure path
 (wrong credentials → visible error message + resend) is what the tests cover.*
 
-## 🧭 Interview talking points
-
-- **Why parameterized queries?** Every value reaches SQL through `?`
-  placeholders; user input is never concatenated (see `api_get_properties`).
-- **How is CSRF prevented?** A per-session random token is embedded in every
-  form and sent as `X-CSRF-Token` by JS; `before_request` validates it with a
-  constant-time compare on every POST.
-- **How are uploads made safe?** Extension whitelist → size limit → Pillow
-  content verification → `uuid` + `secure_filename` storage outside code paths.
-- **How is ownership enforced?** Every mutating query includes
-  `AND owner_id = <session user id>` — the browser-supplied id is never trusted.
-- **Why hash OTPs and rate-limit them?** A leaked DB row must not reveal a
-  usable code; cooldowns/caps stop code brute-forcing and mail bombing.
 
 ## 🔭 Future improvements
 
