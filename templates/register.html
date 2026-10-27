@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Create account | HomeNest{% endblock %}
+{% block page %}register{% endblock %}
+
+{% block content %}
+  <main class="container auth-section">
+    <div class="auth-card">
+      <h1>Create your account</h1>
+      <p class="auth-subtitle">
+        One account to save favorites and post your own rental listings.
+      </p>
+
+      <form method="POST" action="/register" class="auth-form" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+        <div class="form-field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" required
+                 value="{{ values.username or '' }}" autocomplete="username"
+                 placeholder="3-20 letters, numbers or _" />
+          {% if errors.username %}<p class="field-error">{{ errors.username }}</p>{% endif %}
+        </div>
+
+        <div class="form-field">
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" required
+                 value="{{ values.email or '' }}" autocomplete="email"
+                 placeholder="you@example.com" />
+          <p class="field-hint">We will send a 6-digit verification code here.</p>
+          {% if errors.email %}<p class="field-error">{{ errors.email }}</p>{% endif %}
+        </div>
+
+        <div class="form-field">
+          <label for="mobile">Mobile number</label>
+          <input id="mobile" name="mobile" type="tel" required
+                 value="{{ values.mobile or '' }}" autocomplete="tel"
+                 placeholder="10-digit Indian mobile number" />
+          {% if errors.mobile %}<p class="field-error">{{ errors.mobile }}</p>{% endif %}
+        </div>
+
+        <div class="form-field">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input id="password" name="password" type="password" required
+                   autocomplete="new-password" placeholder="At least 8 characters" />
+            <button type="button" class="pw-toggle" data-target="password"
+                    aria-label="Show or hide password">&#128065;</button>
+          </div>
+          <p class="field-hint">Use at least 8 characters with 1 letter and 1 number.</p>
+          {% if errors.password %}<p class="field-error">{{ errors.password }}</p>{% endif %}
+        </div>
+
+        <div class="form-field">
+          <label for="confirm_password">Confirm password</label>
+          <div class="password-wrap">
+            <input id="confirm_password" name="confirm_password" type="password" required
+                   autocomplete="new-password" placeholder="Type the password again" />
+            <button type="button" class="pw-toggle" data-target="confirm_password"
+                    aria-label="Show or hide password">&#128065;</button>
+          </div>
+          {% if errors.confirm_password %}<p class="field-error">{{ errors.confirm_password }}</p>{% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full">Create account</button>
+      </form>
+
+      <div class="auth-links">
+        <p>Already have an account? <a href="/login">Log in</a></p>
+      </div>
+    </div>
+  </main>
+{% endblock %}

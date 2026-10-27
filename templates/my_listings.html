@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}My listings | HomeNest{% endblock %}
+{% block page %}my-listings{% endblock %}
+{% block nav_mylistings %}active{% endblock %}
+
+{% block content %}
+  <main class="container page-section">
+    <div class="page-heading-row">
+      <div>
+        <h1 class="page-title">My listings</h1>
+        <p class="page-subtitle">Manage the properties you have posted.</p>
+      </div>
+      <a href="/add-property" class="btn btn-primary">&#10133; Add new property</a>
+    </div>
+
+    {% if listings %}
+      <div class="listing-manager">
+        {% for listing in listings %}
+          <article class="listing-row" data-id="{{ listing.id }}">
+            <a href="/property/{{ listing.id }}" class="listing-photo">
+              <img src="{{ listing.image_url }}" alt="Photo of {{ listing.title }}"
+                   onerror="this.onerror=null;this.src='/static/images/placeholder.svg';" />
+            </a>
+            <div class="listing-info">
+              <div class="listing-top">
+                <h3><a href="/property/{{ listing.id }}">{{ listing.title }}</a></h3>
+                <span class="status-badge status-{{ listing.status }}">
+                  {{ 'Available' if listing.status == 'available' else 'Rented out' }}
+                </span>
+              </div>
+              <p class="listing-location">
+                &#128205; {{ listing.locality + ', ' if listing.locality }}{{ listing.city }}
+              </p>
+              <p class="listing-meta">
+                &#8377;{{ listing.rent|default(0)|number_format }} / month &middot;
+                {{ listing.bedrooms }} Bed &middot; {{ listing.bathrooms }} Bath
+                {% if listing.area_sqft %} &middot; {{ listing.area_sqft }} sq.ft{% endif %}
+              </p>
+              <p class="listing-stats">
+                {{ listing.image_count }} photo{{ 's' if listing.image_count != 1 }}
+                &middot; posted {{ listing.created_at[:10] if listing.created_at else 'earlier' }}
+              </p>
+            </div>
+            <div class="listing-actions">
+              <a href="/property/{{ listing.id }}/edit" class="btn btn-outline btn-sm">&#9998; Edit</a>
+              <form method="POST" action="/property/{{ listing.id }}/status">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn btn-ghost btn-sm">
+                  {{ 'Mark as rented' if listing.status == 'available' else 'Mark as available' }}
+                </button>
+              </form>
+              <form method="POST" action="/property/{{ listing.id }}/delete"
+                    data-confirm="Delete '{{ listing.title }}'? This cannot be undone.">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="state-block">
+        <span class="state-emoji" aria-hidden="true">&#127968;</span>
+        <h3>You have not posted anything yet</h3>
+        <p>Post your first rental property - it only takes a minute.</p>
+        <a href="/add-property" class="btn btn-primary">Post your first property</a>
+      </div>
+    {% endif %}
+  </main>
+{% endblock %}

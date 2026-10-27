@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Login | HomeNest{% endblock %}
+{% block page %}login{% endblock %}
+{% block nav_login %}active{% endblock %}
+
+{% block content %}
+  <main class="container auth-section">
+    <div class="auth-card">
+      <h1>Welcome back</h1>
+      <p class="auth-subtitle">Log in to save favorites and post your property.</p>
+
+      <form method="POST" action="/login" class="auth-form" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="hidden" name="next" value="{{ request.args.get('next', '') }}" />
+
+        <div class="form-field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" required
+                 value="{{ values.username or '' }}" autocomplete="username"
+                 placeholder="e.g. demo_user" />
+          {% if errors.username %}<p class="field-error">{{ errors.username }}</p>{% endif %}
+        </div>
+
+        <div class="form-field">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input id="password" name="password" type="password" required
+                   autocomplete="current-password" placeholder="Your password" />
+            <button type="button" class="pw-toggle" data-target="password"
+                    aria-label="Show or hide password">&#128065;</button>
+          </div>
+          {% if errors.password %}<p class="field-error">{{ errors.password }}</p>{% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full">Log in</button>
+      </form>
+
+      <div class="auth-links">
+        <a href="/forgot-password">Forgot password?</a>
+        <p>New to HomeNest? <a href="/register">Create an account</a></p>
+      </div>
+    </div>
+  </main>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Verify your email | HomeNest{% endblock %}
+{% block page %}verify-otp{% endblock %}
+
+{% block content %}
+  <main class="container auth-section">
+    <div class="auth-card otp-card">
+      <h1>Verify your email</h1>
+      <p class="auth-subtitle">
+        We sent a 6-digit code to <strong>{{ masked_email }}</strong>.<br />
+        Enter it below to activate your account.
+      </p>
+
+      {% if dev_otp %}
+        <div class="flash flash-info otp-dev-banner" style="background:#f0fdf4; border:1px solid #86efac; color:#166534; padding:12px; border-radius:8px; margin-bottom:18px; text-align:center;">
+          <strong>Development Mode:</strong> Your verification code is <strong style="font-size:1.25rem; letter-spacing:3px; color:#15803d; margin:0 6px;">{{ dev_otp }}</strong>
+          <div style="margin-top:8px;">
+            <button type="button" class="btn btn-outline" style="padding:4px 12px; font-size:0.85rem;" onclick="(function(){
+              const code = '{{ dev_otp }}';
+              for (let i = 1; i <= 6; i++) {
+                const el = document.querySelector('input[name=otp_digit' + i + ']');
+                if (el) el.value = code[i-1] || '';
+              }
+            })()">Autofill Code</button>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if error %}<div class="flash flash-error otp-error">{{ error }}</div>{% endif %}
+
+      <form method="POST" action="/verify-otp" class="auth-form" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="otp-inputs" id="otpInputs">
+          {% for i in range(1, 7) %}
+            <input type="text" inputmode="numeric" maxlength="1"
+                   name="otp_digit{{ i }}" class="otp-box"
+                   aria-label="Digit {{ i }}" autocomplete="one-time-code" />
+          {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Verify account</button>
+      </form>
+
+      <div class="otp-resend">
+        <button type="button" id="resendOtpBtn" class="btn btn-ghost">
+          Resend code <span id="resendTimer" class="resend-timer hidden"></span>
+        </button>
+        <p id="resendMessage" class="resend-message"></p>
+      </div>
+
+      <div class="auth-links">
+        <p>Wrong email? <a href="/register">Register again</a></p>
+      </div>
+    </div>
+  </main>
+{% endblock %}
+
+{% block scripts %}
+  <script>window.OTP_RESEND_URL = "/resend-otp";</script>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit listing' if property else 'Post a property' }} | HomeNest{% endblock %}
+{% block page %}property-form{% endblock %}
+
+{% block content %}
+  <main class="container form-section">
+    <h1 class="page-title">{{ 'Edit your listing' if property else 'Post your property' }}</h1>
+    <p class="page-subtitle">
+      {% if property %}Update the details of your listing below.{% else %}
+      Fill in the details - your listing goes live immediately after publishing.{% endif %}
+    </p>
+
+    <form method="POST" enctype="multipart/form-data" class="property-form" novalidate
+          action="{{ '/property/' ~ property.id ~ '/edit' if property else '/add-property' }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+      <!-- ================= BASIC DETAILS ================= -->
+      <section class="form-section-card">
+        <h2>Basic details</h2>
+        <div class="form-row">
+          <div class="form-field grow">
+            <label for="title">Property title *</label>
+            <input id="title" name="title" type="text" maxlength="120" required
+                   value="{{ values.title or '' }}"
+                   placeholder="e.g. Sunny 2 BHK near Metro Station" />
+            {% if errors.title %}<p class="field-error">{{ errors.title }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="property_type">Property type *</label>
+            <select id="property_type" name="property_type" required>
+              {% for t in property_types %}
+                <option value="{{ t }}" {{ 'selected' if values.property_type == t }}>{{ t }}</option>
+              {% endfor %}
+            </select>
+            {% if errors.property_type %}<p class="field-error">{{ errors.property_type }}</p>{% endif %}
+          </div>
+          <div class="form-field">
+            <label for="furnishing">Furnishing *</label>
+            <select id="furnishing" name="furnishing" required>
+              {% for f in furnishing_options %}
+                <option value="{{ f }}" {{ 'selected' if values.furnishing == f }}>{{ f }}</option>
+              {% endfor %}
+            </select>
+            {% if errors.furnishing %}<p class="field-error">{{ errors.furnishing }}</p>{% endif %}
+          </div>
+          <div class="form-field">
+            <label for="available_from">Available from *</label>
+            <input id="available_from" name="available_from" type="date" required
+                   value="{{ values.available_from or today }}" />
+            {% if errors.available_from %}<p class="field-error">{{ errors.available_from }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="description">Description *</label>
+          <textarea id="description" name="description" rows="5" required
+                    placeholder="Describe the home, the neighbourhood, who it suits best... (at least 30 characters)">{{ values.description or '' }}</textarea>
+          {% if errors.description %}<p class="field-error">{{ errors.description }}</p>{% endif %}
+        </div>
+      </section>
+
+      <!-- ================= LOCATION ================= -->
+      <section class="form-section-card">
+        <h2>Location</h2>
+        <div class="form-row">
+          <div class="form-field grow">
+            <label for="address">Full address *</label>
+            <input id="address" name="address" type="text" maxlength="250" required
+                   value="{{ values.address or '' }}"
+                   placeholder="Building, street, area, pincode" />
+            {% if errors.address %}<p class="field-error">{{ errors.address }}</p>{% endif %}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="locality">Locality</label>
+            <input id="locality" name="locality" type="text" maxlength="100"
+                   value="{{ values.locality or '' }}" placeholder="e.g. Andheri West" />
+            {% if errors.locality %}<p class="field-error">{{ errors.locality }}</p>{% endif %}
+          </div>
+          <div class="form-field">
+            <label for="city">City *</label>
+            <input id="city" name="city" type="text" maxlength="80" required
+                   value="{{ values.city or '' }}" placeholder="e.g. Mumbai" />
+            {% if errors.city %}<p class="field-error">{{ errors.city }}</p>{% endif %}
+          </div>
+          <div class="form-field">
+            <label for="district">District</label>
+            <input id="district" name="district" type="text" maxlength="80"
+                   value="{{ values.district or '' }}" placeholder="e.g. Mumbai Suburban" />
+            {% if errors.district %}<p class="field-error">{{ errors.district }}</p>{% endif %}
+          </div>
+          <div class="form-field">
+            <label for="state">State</label>
+            <input id="state" name="state" type="text" maxlength="80"
+                   value="{{ values.state or '' }}" placeholder="e.g. Maharashtra" />
+            {% if errors.state %}<p class="field-error">{{ errors.state }}</p>{% endif %}
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= RENT & SIZE ================= -->
+      <section class="form-section-card">
+        <h2>Rent &amp; size</h2>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="rent">Monthly rent (₹) *</label>
+            <input id="rent" name="rent" type="number" min="1000" max="10000000" step="100" required
+                   value="{{ values.rent or '' }}" placeholder="e.g. 25000" />
+            {% if errors.rent %}<p class="field-error">{{ errors.rent }}</p>{% endif %}
+          </div>
+          <div class="form-field">
+            <label for="deposit">Security deposit (₹)</label>
+            <input id="deposit" name="deposit" type="number" min="0" step="100"
+                   value="{{ values.get('deposit') if values.get('deposit') is not none else '' }}"
+                   placeholder="e.g. 75000" />
+            {% if errors.deposit %}<p class="field-error">{{ errors.deposit }}</p>{% endif %}
+          </div>
+          <div class="form-field">
+            <label for="bedrooms">Bedrooms *</label>
+            <input id="bedrooms" name="bedrooms" type="number" min="1" max="10" required
+                   value="{{ values.get('bedrooms') or 1 }}" />
+            {% if errors.bedrooms %}<p class="field-error">{{ errors.bedrooms }}</p>{% endif %}
+          </div>
+          <div class="form-field">
+            <label for="bathrooms">Bathrooms *</label>
+            <input id="bathrooms" name="bathrooms" type="number" min="1" max="10" required
+                   value="{{ values.get('bathrooms') or 1 }}" />
+            {% if errors.bathrooms %}<p class="field-error">{{ errors.bathrooms }}</p>{% endif %}
+          </div>
+          <div class="form-field">
+            <label for="area_sqft">Area (sq.ft)</label>
+            <input id="area_sqft" name="area_sqft" type="number" min="50" max="1000000"
+                   value="{{ values.get('area_sqft') if values.get('area_sqft') is not none else '' }}"
+                   placeholder="e.g. 950" />
+            {% if errors.area_sqft %}<p class="field-error">{{ errors.area_sqft }}</p>{% endif %}
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PHOTOS ================= -->
+      <section class="form-section-card">
+        <h2>Photos</h2>
+
+        {% if property %}
+          <!-- Existing photos (edit mode): remove + set main -->
+          <div class="photo-manager">
+            {% for image in images %}
+              <div class="photo-tile {{ 'is-primary' if image.is_primary }}">
+                <img src="/static/uploads/{{ image.filename }}" alt="Property photo" />
+                {% if image.is_primary %}<span class="photo-primary-tag">Main</span>{% endif %}
+                <div class="photo-tile-actions">
+                  {% if not image.is_primary %}
+                    <form method="POST"
+                          action="/property/{{ property.id }}/photos/{{ image.id }}/primary">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                      <button type="submit" class="btn-tile" title="Set as main photo">&#11088;</button>
+                    </form>
+                  {% endif %}
+                  <form method="POST"
+                        action="/property/{{ property.id }}/photos/{{ image.id }}/delete">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <button type="submit" class="btn-tile btn-tile-danger"
+                            title="Remove photo"
+                            onclick="return confirm('Remove this photo?');">&#10005;</button>
+                  </form>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <p class="field-hint">
+            Upload more photos below ({{ images|length }} of 8 used).
+            The photo marked &#11088; is shown on your listing card.
+          </p>
+        {% else %}
+          <p class="field-hint">Add up to 8 photos. The first one becomes the main photo.</p>
+        {% endif %}
+
+        <div class="form-field">
+          <label for="photos">{{ 'Add more photos' if property else 'Property photos * (JPG, PNG or WEBP, max 5 MB each)' }}</label>
+          <input id="photos" name="photos" type="file"
+                 accept=".jpg,.jpeg,.png,.webp" multiple />
+          <div id="photoPreviews" class="photo-previews"></div>
+          {% if errors.photos %}<p class="field-error">{{ errors.photos }}</p>{% endif %}
+        </div>
+      </section>
+
+      <!-- ================= AMENITIES ================= -->
+      <section class="form-section-card">
+        <h2>Amenities</h2>
+        {% set selected_amenities = (values.amenities or '').split(',') if values.amenities else [] %}
+        <div class="amenity-grid">
+          {% for key, label in amenity_labels.items() %}
+            <label class="amenity-check">
+              <input type="checkbox" name="amenities" value="{{ key }}"
+                     {{ 'checked' if key in selected_amenities }} />
+              <span>{{ label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- ================= CONTACT ================= -->
+      <section class="form-section-card">
+        <h2>Contact details</h2>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="contact_name">Contact name *</label>
+            <input id="contact_name" name="contact_name" type="text" maxlength="80" required
+                   value="{{ values.contact_name or '' }}" placeholder="Shown to interested tenants" />
+            {% if errors.contact_name %}<p class="field-error">{{ errors.contact_name }}</p>{% endif %}
+          </div>
+          <div class="form-field">
+            <label for="contact_phone">Contact phone *</label>
+            <input id="contact_phone" name="contact_phone" type="tel" required
+                   value="{{ values.contact_phone or '' }}" placeholder="10-digit mobile number" />
+            <p class="field-hint">Hidden from guests - only logged-in users can see it.</p>
+            {% if errors.contact_phone %}<p class="field-error">{{ errors.contact_phone }}</p>{% endif %}
+          </div>
+        </div>
+      </section>
+
+      <div class="form-actions">
+        <a href="{{ '/my-listings' if property else '/' }}" class="btn btn-ghost">Cancel</a>
+        <button type="submit" class="btn btn-primary btn-lg">
+          {{ 'Save changes' if property else 'Publish listing' }}
+        </button>
+      </div>
+    </form>
+  </main>
+{% endblock %}

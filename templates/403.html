@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Not allowed | HomeNest{% endblock %}
+{% block page %}not-allowed{% endblock %}
+
+{% block content %}
+  <main class="container">
+    <div class="state-block error-page">
+      <span class="state-emoji" aria-hidden="true">&#128274;</span>
+      <h3>You can't do that</h3>
+      <p>This listing belongs to another user, or the link is wrong.</p>
+      <a href="/" class="btn btn-primary">&#8592; Back to HomeNest</a>
+    </div>
+  </main>
+{% endblock %}

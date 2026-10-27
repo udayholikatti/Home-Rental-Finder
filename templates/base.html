@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token() }}" />
+  {% block meta %}{% endblock %}
+  <title>{% block title %}HomeNest | Find Rental Homes{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body data-page="{% block page %}{% endblock %}">
+
+  <!-- ================= NAVBAR (auth-aware) ================= -->
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <a href="/" class="brand">
+        <svg viewBox="0 0 64 64" width="30" height="30" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#0f766e"/>
+          <path d="M32 13 11 32h7v17h11V37h6v12h11V32h7L32 13z" fill="#ffffff"/>
+        </svg>
+        <span>Home<em>Nest</em></span>
+      </a>
+      <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation menu">&#9776;</button>
+      <nav id="navLinks" class="nav-links">
+        <a href="/" class="nav-link {% block nav_home %}{% endblock %}">Home</a>
+        {% if current_user %}
+          <a href="/my-listings" class="nav-link {% block nav_mylistings %}{% endblock %}">My Listings</a>
+          <a href="/favorites" class="nav-link {% block nav_favorites %}{% endblock %}">Favorites
+            <span id="favCount" class="nav-badge {% if fav_count %}visible{% endif %}">{{ fav_count }}</span>
+          </a>
+          <a href="/add-property" class="btn btn-primary btn-nav">&#10133; Post Property</a>
+          <span class="nav-user" title="{{ current_user.email }}">Hi, {{ current_user.username }}</span>
+          <form action="/logout" method="POST" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <button type="submit" class="nav-link nav-logout">Logout</button>
+          </form>
+        {% else %}
+          <a href="/favorites" class="nav-link {% block nav_favorites_guest %}{% endblock %}">Favorites</a>
+          <a href="/login" class="nav-link {% block nav_login %}{% endblock %}">Login</a>
+          <a href="/register" class="btn btn-outline btn-nav">Sign up</a>
+          <a href="/add-property" class="btn btn-primary btn-nav">&#10133; Post Property</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <!-- ================= FLASH MESSAGES ================= -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container flash-stack" aria-live="polite">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">
+            <span>{{ message }}</span>
+            <button type="button" class="flash-close" aria-label="Dismiss">&times;</button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <a href="/" class="brand brand-light">
+          <svg viewBox="0 0 64 64" width="26" height="26" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#0f766e"/>
+            <path d="M32 13 11 32h7v17h11V37h6v12h11V32h7L32 13z" fill="#ffffff"/>
+          </svg>
+          <span>Home<em>Nest</em></span>
+        </a>
+        <p class="footer-about">
+          A full-stack learning project built with Flask, SQLite, HTML, CSS and
+          JavaScript. Every listing on this site is clearly identified sample data.
+        </p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <a href="/">Home</a>
+        <a href="/add-property">Post a property</a>
+        <a href="/favorites">Favorites</a>
+        <a href="/api/properties">Properties API</a>
+      </div>
+      <div>
+        <h4>Tech stack</h4>
+        <p>Python Flask &middot; SQLite &middot; HTML5 &middot; CSS3 &middot; JavaScript</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        &copy; 2026 HomeNest &mdash; sample-data demo project. Images are AI-generated for illustration.
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>window.HOMENEST = { csrfToken: "{{ csrf_token() }}", loggedIn: {{ 'true' if current_user else 'false' }} };</script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

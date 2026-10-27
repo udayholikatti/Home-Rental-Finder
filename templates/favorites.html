@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Your favorites | HomeNest{% endblock %}
+{% block page %}favorites{% endblock %}
+{% block nav_favorites %}active{% endblock %}
+
+{% block content %}
+  <main class="container page-section">
+    <h1 class="page-title">Your favorite homes</h1>
+    <p id="favCountText" class="page-subtitle"></p>
+
+    <!-- Loading state -->
+    <div id="favLoading" class="state-block">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Loading favorites...</p>
+    </div>
+
+    <!-- Error state -->
+    <div id="favError" class="state-block hidden">
+      <span class="state-emoji" aria-hidden="true">&#9888;&#65039;</span>
+      <h3>Something went wrong</h3>
+      <p id="favErrorMessage">Could not load favorites.</p>
+      <button id="favRetryBtn" class="btn btn-primary">Try again</button>
+    </div>
+
+    <!-- Empty state -->
+    <div id="favEmpty" class="state-block hidden">
+      <span class="state-emoji" aria-hidden="true">&#128420;</span>
+      <h3>No favorites yet</h3>
+      <p>Tap the heart on any home to save it here for later.</p>
+      <a href="/" class="btn btn-primary">Browse homes</a>
+    </div>
+
+    <!-- Favorite cards are rendered here by script.js -->
+    <div id="favGrid" class="property-grid hidden"></div>
+  </main>
+{% endblock %}

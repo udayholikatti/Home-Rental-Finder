@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Property details | HomeNest{% endblock %}
+{% block page %}details{% endblock %}
+
+{% block content %}
+  <main class="container detail-page">
+    <a href="/" class="back-link">&#8592; Back to homes</a>
+
+    <!-- Loading state -->
+    <div id="detailLoading" class="state-block">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Loading property...</p>
+    </div>
+
+    <!-- Error / not-found state -->
+    <div id="detailError" class="state-block hidden">
+      <span class="state-emoji" aria-hidden="true">&#128533;</span>
+      <h3>Property not found</h3>
+      <p id="detailErrorMessage">This property may have been removed or the link is wrong.</p>
+      <a href="/" class="btn btn-primary">Browse homes</a>
+    </div>
+
+    <!-- Property content (filled in by script.js) -->
+    <div id="detailContent" class="detail-grid hidden">
+      <div class="detail-main">
+        <div class="detail-gallery">
+          <div class="detail-media">
+            <img id="detailImage" src="/static/images/placeholder.svg" alt="Property photo" />
+            <span id="detailBadge" class="type-badge"></span>
+            <span id="detailStatus" class="status-badge hidden"></span>
+          </div>
+          <div id="detailThumbs" class="detail-thumbs"></div>
+        </div>
+
+        <h1 id="detailTitle" class="detail-title"></h1>
+        <p id="detailCity" class="detail-city"></p>
+
+        <div class="detail-chips">
+          <div class="chip">
+            <span class="chip-icon" aria-hidden="true">&#128719;</span>
+            <div><strong id="detailBeds"></strong><small>Bedrooms</small></div>
+          </div>
+          <div class="chip">
+            <span class="chip-icon" aria-hidden="true">&#128703;</span>
+            <div><strong id="detailBaths"></strong><small>Bathrooms</small></div>
+          </div>
+          <div class="chip">
+            <span class="chip-icon" aria-hidden="true">&#127968;</span>
+            <div><strong id="detailType"></strong><small>Property type</small></div>
+          </div>
+          <div class="chip">
+            <span class="chip-icon" aria-hidden="true">&#128506;</span>
+            <div><strong id="detailFurnishing"></strong><small>Furnishing</small></div>
+          </div>
+          <div class="chip hidden" id="detailAreaChip">
+            <span class="chip-icon" aria-hidden="true">&#128207;</span>
+            <div><strong id="detailArea"></strong><small>Built-up area</small></div>
+          </div>
+        </div>
+
+        <h2>About this home</h2>
+        <p id="detailDescription" class="detail-description"></p>
+
+        <h2>Amenities</h2>
+        <ul id="detailAmenities" class="amenities-list"></ul>
+      </div>
+
+      <aside class="detail-sidebar">
+        <p class="detail-rent">
+          <span id="detailRent"></span>
+          <span class="per-month">/ month</span>
+        </p>
+        <p id="detailDeposit" class="detail-deposit hidden"></p>
+
+        <p class="detail-address-label">Address</p>
+        <p id="detailAddress" class="detail-address"></p>
+
+        <p class="detail-address-label">Available</p>
+        <p id="detailAvailableFrom" class="detail-address"></p>
+
+        <button id="detailHeartBtn" class="btn btn-outline btn-full"></button>
+
+        <!-- Owner contact card (filled in by script.js) -->
+        <div class="owner-card">
+          <p class="owner-card-title">Listed by owner</p>
+          <p class="owner-name"><span id="detailOwnerName"></span>
+            <small id="detailMemberSince"></small></p>
+          <p id="detailContactName" class="owner-contact"></p>
+          <p id="detailContactPhone" class="owner-phone"></p>
+          <a id="detailLoginCta" class="btn btn-primary btn-full hidden"
+             href="/login">Log in to see phone number</a>
+        </div>
+
+        <a id="detailEditLink" class="btn btn-ghost btn-full hidden"
+           href="/">&#9998; Edit this listing</a>
+
+        <p class="sidebar-note">
+          Sample listings are for demonstration only. For user-posted homes,
+          contact the owner directly using the details above.
+        </p>
+      </aside>
+    </div>
+  </main>
+{% endblock %}
+
+{% block scripts %}
+  <script>window.DETAIL_PROPERTY_ID = {{ property_id }};</script>
+{% endblock %}

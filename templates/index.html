@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}HomeNest | Find Rental Homes{% endblock %}
+{% block page %}index{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+  <!-- ================= HERO + CITY SEARCH ================= -->
+  <section class="hero">
+    <div class="container">
+      <h1>Find a home you'll love to live in</h1>
+      <p class="hero-subtitle">
+        Browse rental homes posted by owners across India - search by city,
+        compare rents and save your favourites.
+      </p>
+      <form id="heroSearchForm" class="hero-search" autocomplete="off">
+        <span class="hero-search-icon" aria-hidden="true">&#128205;</span>
+        <input id="cityInput" type="text" list="citySuggestions"
+               placeholder="Enter a city or locality - e.g. Mumbai" aria-label="Search city" />
+        <datalist id="citySuggestions"></datalist>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+      <p class="hero-hint">Try: Mumbai, Bengaluru, Gachibowli, Whitefield</p>
+    </div>
+  </section>
+
+  <!-- ================= FILTERS + RESULTS ================= -->
+  <section class="container browse-section">
+    <form id="filterForm" class="filter-card" autocomplete="off">
+      <div class="filter-field">
+        <label for="minRentInput">Min rent (&#8377;)</label>
+        <input id="minRentInput" type="number" min="0" step="500" placeholder="e.g. 15000" />
+      </div>
+      <div class="filter-field">
+        <label for="maxRentInput">Max rent (&#8377;)</label>
+        <input id="maxRentInput" type="number" min="0" step="500" placeholder="e.g. 50000" />
+      </div>
+      <div class="filter-field">
+        <label for="bedroomSelect">Bedrooms</label>
+        <select id="bedroomSelect">
+          <option value="">Any</option>
+          <option value="1">1+</option>
+          <option value="2">2+</option>
+          <option value="3">3+</option>
+          <option value="4">4+</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="typeSelect">Property type</label>
+        <select id="typeSelect">
+          <option value="">Any type</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="furnishingSelect">Furnishing</label>
+        <select id="furnishingSelect">
+          <option value="">Any</option>
+          <option value="Unfurnished">Unfurnished</option>
+          <option value="Semi-Furnished">Semi-Furnished</option>
+          <option value="Fully-Furnished">Fully-Furnished</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="statusSelect">Availability</label>
+        <select id="statusSelect">
+          <option value="">Any</option>
+          <option value="available">Available now</option>
+          <option value="rented">Rented out</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="sortSelect">Sort by</label>
+        <select id="sortSelect">
+          <option value="newest">Newest first</option>
+          <option value="rent_asc">Rent: low to high</option>
+          <option value="rent_desc">Rent: high to low</option>
+        </select>
+      </div>
+      <div class="filter-actions">
+        <button type="submit" class="btn btn-primary">Apply filters</button>
+        <button type="button" id="resetFiltersBtn" class="btn btn-ghost">Reset</button>
+      </div>
+    </form>
+
+    <div id="resultsHeader" class="results-header hidden">
+      <h2 id="resultsHeading">Browse rental homes</h2>
+      <p id="resultsCount" class="results-count"></p>
+    </div>
+
+    <!-- Loading / empty / error states (toggled by script.js) -->
+    <div id="loadingState" class="state-block">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Searching homes...</p>
+    </div>
+
+    <div id="emptyState" class="state-block hidden">
+      <span class="state-emoji" aria-hidden="true">&#127968;</span>
+      <h3>No homes matched your search</h3>
+      <p id="emptyMessage">Try a different city or remove some filters.</p>
+      <button id="emptyResetBtn" class="btn btn-primary">Clear search &amp; filters</button>
+    </div>
+
+    <div id="errorState" class="state-block hidden">
+      <span class="state-emoji" aria-hidden="true">&#9888;&#65039;</span>
+      <h3>Something went wrong</h3>
+      <p id="errorMessage">Could not load properties.</p>
+      <button id="retryBtn" class="btn btn-primary">Try again</button>
+    </div>
+
+    <!-- Property cards are rendered here by script.js -->
+    <div id="propertyGrid" class="property-grid hidden"></div>
+
+    <!-- Pagination controls (rendered by script.js) -->
+    <nav id="pagination" class="pagination hidden" aria-label="Search result pages">
+      <button id="prevPageBtn" class="btn btn-ghost">&#8592; Previous</button>
+      <span id="pageInfo" class="page-info"></span>
+      <button id="nextPageBtn" class="btn btn-ghost">Next &#8594;</button>
+    </nav>
+  </section>
+{% endblock %}
